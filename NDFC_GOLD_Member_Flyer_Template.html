@@ -1020,18 +1020,6 @@ html,body{
         Member quote goes here.
       </div>
 
-      <div class="quote-attribution">
-
-        <div class="rule"></div>
-
-        <span id="handleEl">
-          @nepaldallasfc
-        </span>
-
-      </div>
-
-    </div>
-
   </div>
 
 
@@ -1289,7 +1277,6 @@ async function loadMember(){
       photoPosition:"center 40%",
       designation:"Gold",
       season:"2026/27",
-      socialHandle:"@nepaldallasfc",
       tagline:"Home Away From Home"
     });
 
@@ -1358,12 +1345,6 @@ function applyMemberData(data){
     "seasonEl"
   ).textContent =
     data.season;
-
-
-  document.getElementById(
-    "handleEl"
-  ).textContent =
-    data.socialHandle;
 
 
   document.getElementById(
