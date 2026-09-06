@@ -620,60 +620,71 @@ html,body{
   text-transform:uppercase;
 }
 
+
+.change-member-button{
+  position:fixed;
+  left:20px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:2000;
+  border:none;
+  border-radius:6px;
+  padding:13px 16px;
+  background:var(--blue);
+  color:#fff;
+  font-family:var(--font-accent);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1px;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+
+.change-member-button:hover{
+  background:var(--red);
+}
+
+@media (max-width:1200px){
+  .change-member-button{
+    left:8px;
+    padding:11px 12px;
+    font-size:11px;
+  }
+}
+
 </style>
 </head>
 
+
 <body>
+
+<button class="change-member-button" id="changeMemberButton" type="button">
+  CHANGE MEMBER
+</button>
+
 
 <!-- =========================================================
      SETUP SCREEN
      ========================================================= -->
 
 <div id="setupScreen">
-
   <div class="setup-card">
-
     <img
-      src="NDFC_Official_Logo.png"
+      src="https://raw.githubusercontent.com/nepaldallasfootballclub/NDFC-Strava-Stats/main/NDFC_Official_Logo.png"
       class="setup-logo"
       alt="NDFC Logo"
     >
 
-    <h1>
-      NDFC <span>Gold</span>
-    </h1>
+    <h1>NDFC <span>Gold</span></h1>
 
     <div class="setup-subtitle">
-      Select your NDFC Gold Member folder to begin.
-      <br>
-      The flyer will automatically find the member's photo and quote.
+      Enter the member name. The photo and quote will be loaded automatically from GitHub.
     </div>
 
-    <button
-      class="setup-button"
-      id="folderButton"
-    >
-      SELECT NDFC FOLDER
-    </button>
-
-    <div
-      class="folder-status"
-      id="folderStatus"
-    >
-      No folder selected
-    </div>
-
-    <div
-      class="member-search"
-      id="memberSearch"
-    >
-
-      <label for="memberInput">
-        Member Name
-      </label>
+    <div class="member-search" id="memberSearch" style="display:block;">
+      <label for="memberInput">Member Name</label>
 
       <div class="member-search-row">
-
         <input
           type="text"
           id="memberInput"
@@ -681,24 +692,15 @@ html,body{
           autocomplete="off"
         >
 
-        <button
-          class="generate-button"
-          id="generateButton"
-        >
-          GENERATE
+        <button class="generate-button" id="generateButton">
+          LOAD MEMBER
         </button>
-
       </div>
-
     </div>
 
-    <div
-      class="error-message"
-      id="errorMessage"
-    ></div>
-
+    <div class="folder-status" id="folderStatus"></div>
+    <div class="error-message" id="errorMessage"></div>
   </div>
-
 </div>
 
 
@@ -1095,38 +1097,26 @@ html,body{
    SETTINGS
    ========================================================= */
 
-const IMAGE_FOLDER = "member-images";
-const QUOTE_FOLDER = "member-quotes";
+const GITHUB_IMAGE_BASE =
+  "https://raw.githubusercontent.com/nepaldallasfootballclub/2026-27-Gold-Member-FAC/main/member-images/";
 
-const IMAGE_EXTENSIONS = [
-  ".jpg",
-  ".jpeg",
-  ".png"
-];
+const GITHUB_QUOTE_BASE =
+  "https://raw.githubusercontent.com/nepaldallasfootballclub/2026-27-Gold-Member-FAC/main/member-quotes/";
 
+const GITHUB_LOGO_URL =
+  "https://raw.githubusercontent.com/nepaldallasfootballclub/NDFC-Strava-Stats/main/NDFC_Official_Logo.png";
 
-/* =========================================================
-   STATE
-   ========================================================= */
-
-let selectedFolder = null;
+const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"];
 
 
 /* =========================================================
-   ELEMENTS
+   ELEMENTS / STATE
    ========================================================= */
+
+let currentMemberName = "";
 
 const setupScreen =
   document.getElementById("setupScreen");
-
-const folderButton =
-  document.getElementById("folderButton");
-
-const folderStatus =
-  document.getElementById("folderStatus");
-
-const memberSearch =
-  document.getElementById("memberSearch");
 
 const memberInput =
   document.getElementById("memberInput");
@@ -1134,8 +1124,14 @@ const memberInput =
 const generateButton =
   document.getElementById("generateButton");
 
+const changeMemberButton =
+  document.getElementById("changeMemberButton");
+
 const errorMessage =
   document.getElementById("errorMessage");
+
+const folderStatus =
+  document.getElementById("folderStatus");
 
 const canvas =
   document.getElementById("canvas");
@@ -1146,481 +1142,180 @@ const canvas =
    ========================================================= */
 
 function nameToFileBase(name){
-
   return name
     .trim()
     .replace(/\s+/g, "_")
     .replace(/[^\w\-]/g, "");
-
 }
 
 
 /* =========================================================
-   CASE-INSENSITIVE FILE MATCHING
+   GITHUB HELPERS
    ========================================================= */
 
-function findFileInDirectory(
-  directoryHandle,
-  targetName
-){
+function githubFileURL(baseURL, filename){
+  return baseURL + encodeURIComponent(filename);
+}
 
-  return (async () => {
+async function findGithubImage(baseName){
 
-    const wanted =
-      targetName.toLowerCase();
+  for(const extension of IMAGE_EXTENSIONS){
 
-    for await (
-      const [name, handle]
-      of directoryHandle.entries()
-    ){
+    const filename = baseName + extension;
+    const url = githubFileURL(GITHUB_IMAGE_BASE, filename);
 
-      if(
-        handle.kind === "file" &&
-        name.toLowerCase() === wanted
-      ){
+    try{
+      const response = await fetch(url, {
+        method:"HEAD",
+        cache:"no-store"
+      });
 
-        return handle;
-
+      if(response.ok){
+        return url;
       }
-
+    }catch(error){
+      // Try the next extension.
     }
-
-    return null;
-
-  })();
-
-}
-
-
-/* =========================================================
-   FIND SUBFOLDER
-   ========================================================= */
-
-async function getSubfolder(
-  parentHandle,
-  folderName
-){
-
-  try{
-
-    return await parentHandle.getDirectoryHandle(
-      folderName
-    );
-
-  }catch{
-
-    return null;
-
-  }
-
-}
-
-
-/* =========================================================
-   READ TEXT FILE
-   ========================================================= */
-
-async function readTextFile(
-  fileHandle
-){
-
-  const file =
-    await fileHandle.getFile();
-
-  return await file.text();
-
-}
-
-
-/* =========================================================
-   FIND MEMBER IMAGE
-   ========================================================= */
-
-async function findMemberImage(
-  imageFolder,
-  baseName
-){
-
-  for(
-    const extension of IMAGE_EXTENSIONS
-  ){
-
-    const filename =
-      baseName + extension;
-
-    const handle =
-      await findFileInDirectory(
-        imageFolder,
-        filename
-      );
-
-    if(handle){
-
-      return handle;
-
-    }
-
   }
 
   return null;
+}
 
+async function fetchGithubQuote(baseName){
+
+  const url =
+    githubFileURL(
+      GITHUB_QUOTE_BASE,
+      baseName + ".txt"
+    );
+
+  const response = await fetch(url, {
+    cache:"no-store"
+  });
+
+  if(!response.ok){
+    return null;
+  }
+
+  const text = await response.text();
+
+  return text
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .find(line => line.length > 0) || null;
 }
 
 
 /* =========================================================
-   OPEN FOLDER
+   INITIAL LOGO
    ========================================================= */
 
-folderButton.addEventListener(
-  "click",
-  async () => {
-
-    try{
-
-      if(
-        !window.showDirectoryPicker
-      ){
-
-        showError(
-          "Your browser does not support folder access. Please use the latest Google Chrome or Microsoft Edge."
-        );
-
-        return;
-
-      }
-
-
-      selectedFolder =
-        await window.showDirectoryPicker();
-
-
-      /* Ask for permission */
-
-      if(
-        selectedFolder.requestPermission
-      ){
-
-        const permission =
-          await selectedFolder.requestPermission({
-            mode:"read"
-          });
-
-        if(permission !== "granted"){
-
-          showError(
-            "Folder permission was not granted."
-          );
-
-          return;
-
-        }
-
-      }
-
-
-      /* Find required folders */
-
-      const imageFolder =
-        await getSubfolder(
-          selectedFolder,
-          IMAGE_FOLDER
-        );
-
-      const quoteFolder =
-        await getSubfolder(
-          selectedFolder,
-          QUOTE_FOLDER
-        );
-
-
-      if(!imageFolder){
-
-        showError(
-          'Could not find the "member-images" folder.'
-        );
-
-        return;
-
-      }
-
-
-      if(!quoteFolder){
-
-        showError(
-          'Could not find the "member-quotes" folder.'
-        );
-
-        return;
-
-      }
-
-
-      folderStatus.textContent =
-        "✓ NDFC folder loaded successfully";
-
-
-      folderStatus.style.color =
-        "#16833a";
-
-
-      memberSearch.style.display =
-        "block";
-
-
-      errorMessage.style.display =
-        "none";
-
-
-      memberInput.focus();
-
-    }catch(error){
-
-      if(
-        error.name === "AbortError"
-      ){
-
-        return;
-
-      }
-
-      showError(
-        "Could not open the selected folder."
-      );
-
-      console.error(error);
-
-    }
-
-  }
-);
+document.querySelectorAll("img.logo, img.setup-logo").forEach(img => {
+  img.src = GITHUB_LOGO_URL;
+});
 
 
 /* =========================================================
-   GENERATE MEMBER
+   LOAD MEMBER
    ========================================================= */
 
-generateButton.addEventListener(
-  "click",
-  generateMember
-);
+generateButton.addEventListener("click", loadMember);
 
-
-memberInput.addEventListener(
-  "keydown",
-  event => {
-
-    if(event.key === "Enter"){
-
-      generateMember();
-
-    }
-
+memberInput.addEventListener("keydown", event => {
+  if(event.key === "Enter"){
+    loadMember();
   }
-);
+});
+
+changeMemberButton.addEventListener("click", () => {
+  setupScreen.style.display = "flex";
+  errorMessage.style.display = "none";
+  memberInput.focus();
+  memberInput.select();
+});
 
 
-/* =========================================================
-   GENERATE
-   ========================================================= */
-
-async function generateMember(){
+async function loadMember(){
 
   clearError();
-
-
-  if(!selectedFolder){
-
-    showError(
-      "Please select your NDFC folder first."
-    );
-
-    return;
-
-  }
-
 
   const memberName =
     memberInput.value.trim();
 
-
   if(!memberName){
-
-    showError(
-      "Please enter a member name."
-    );
-
+    showError("Please enter a member name.");
     return;
-
   }
-
 
   const baseName =
     nameToFileBase(memberName);
 
+  if(!baseName){
+    showError("Please enter a valid member name.");
+    return;
+  }
+
+  generateButton.disabled = true;
+  generateButton.textContent = "LOADING...";
+  folderStatus.textContent = "Fetching photo and quote from GitHub...";
+  folderStatus.style.color = "#777";
 
   try{
 
-    const imageFolder =
-      await getSubfolder(
-        selectedFolder,
-        IMAGE_FOLDER
+    const [imageURL, quote] =
+      await Promise.all([
+        findGithubImage(baseName),
+        fetchGithubQuote(baseName)
+      ]);
+
+    if(!imageURL){
+      throw new Error(
+        `No GitHub image found for "${memberName}". Expected ${baseName}.jpg, ${baseName}.jpeg, or ${baseName}.png`
       );
-
-    const quoteFolder =
-      await getSubfolder(
-        selectedFolder,
-        QUOTE_FOLDER
-      );
-
-
-    /* ---------------------------------------------
-       FIND IMAGE
-       --------------------------------------------- */
-
-    const imageHandle =
-      await findMemberImage(
-        imageFolder,
-        baseName
-      );
-
-
-    if(!imageHandle){
-
-      showError(
-        `No image found for "${memberName}".<br><br>` +
-        `Expected something like:<br>` +
-        `<strong>${baseName}.jpg</strong>, ` +
-        `<strong>${baseName}.jpeg</strong>, or ` +
-        `<strong>${baseName}.png</strong>`
-      );
-
-      return;
-
     }
-
-
-    /* ---------------------------------------------
-       FIND QUOTE
-       --------------------------------------------- */
-
-    const quoteHandle =
-      await findFileInDirectory(
-        quoteFolder,
-        baseName + ".txt"
-      );
-
-
-    if(!quoteHandle){
-
-      showError(
-        `No quote file found for "${memberName}".<br><br>` +
-        `Expected:<br>` +
-        `<strong>${baseName}.txt</strong>`
-      );
-
-      return;
-
-    }
-
-
-    /* ---------------------------------------------
-       READ QUOTE
-       --------------------------------------------- */
-
-    const quoteText =
-      await readTextFile(
-        quoteHandle
-      );
-
-
-    /*
-       Use the first non-empty line.
-
-       So if Sajan_Gautam.txt contains:
-
-       Best Club.
-
-       it becomes:
-
-       Best Club.
-    */
-
-    const quote =
-      quoteText
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .find(line => line.length > 0);
-
 
     if(!quote){
-
-      showError(
-        `"${baseName}.txt" is empty.`
+      throw new Error(
+        `No GitHub quote found for "${memberName}". Expected ${baseName}.txt`
       );
-
-      return;
-
     }
 
-
-    /* ---------------------------------------------
-       CREATE IMAGE URL
-       --------------------------------------------- */
-
-    const imageFile =
-      await imageHandle.getFile();
-
-    const imageURL =
-      URL.createObjectURL(
-        imageFile
-      );
-
-
-    /* ---------------------------------------------
-       LOAD FLYER
-       --------------------------------------------- */
+    currentMemberName = memberName;
 
     applyMemberData({
-
       memberName:memberName,
-
       memberPhoto:imageURL,
-
       memberQuote:quote,
-
       photoPosition:"center 40%",
-
       designation:"Gold",
-
       season:"2026/27",
-
       socialHandle:"@nepaldallasfc",
-
       tagline:"Home Away From Home"
-
     });
 
-
-    canvas.style.display =
-      "flex";
-
-    setupScreen.style.display =
-      "none";
-
+    canvas.style.display = "flex";
+    setupScreen.style.display = "none";
 
     renderFlyer();
-
 
   }catch(error){
 
     console.error(error);
+    showError(error.message || "Something went wrong while loading this member.");
 
-    showError(
-      "Something went wrong while loading this member."
-    );
+  }finally{
 
+    generateButton.disabled = false;
+    generateButton.textContent = "LOAD MEMBER";
+
+    if(currentMemberName){
+      folderStatus.textContent =
+        `Loaded: ${currentMemberName}`;
+      folderStatus.style.color = "#16833a";
+    }else{
+      folderStatus.textContent = "";
+    }
   }
-
 }
 
 
