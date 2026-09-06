@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -11,913 +10,1093 @@
 
 <style>
 
-  /* ======================================================================
-     NDFC GOLD MEMBER FLYER
-     ====================================================================== */
+:root{
+  --red:#D0021B;
+  --red-dark:#94010F;
+  --blue:#12169C;
+  --blue-dark:#0A0C63;
+  --blue-pale:#EEF0FA;
+  --white:#FFFFFF;
+  --cream:#FBFAF6;
+  --ink:#14141C;
+  --ink-soft:rgba(20,20,28,0.62);
+  --line:rgba(20,20,28,0.12);
 
-  :root{
-    --red:         #D0021B;
-    --red-dark:    #94010F;
-    --blue:        #12169C;
-    --blue-dark:   #0A0C63;
-    --blue-pale:   #EEF0FA;
-    --white:       #FFFFFF;
-    --cream:       #FBFAF6;
-    --ink:         #14141C;
-    --ink-soft:    rgba(20,20,28,0.62);
-    --line:        rgba(20,20,28,0.12);
+  --font-display:'Anton','Arial Narrow',sans-serif;
+  --font-body:'Manrope',-apple-system,sans-serif;
+  --font-accent:'Space Grotesk','Manrope',sans-serif;
+}
 
-    --font-display: 'Anton', 'Arial Narrow', sans-serif;
-    --font-body:    'Manrope', -apple-system, sans-serif;
-    --font-accent:  'Space Grotesk', 'Manrope', sans-serif;
-  }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-  *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-  }
+html,body{
+  background:#1a1a1a;
+}
 
-  html,body{
-    background:#1a1a1a;
-  }
+/* =========================================================
+   FOLDER / MEMBER SELECTOR
+   ========================================================= */
 
-  /* ---------- CANVAS ---------- */
+#setupScreen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:
+    radial-gradient(circle at top, rgba(18,22,156,.25), transparent 45%),
+    #111;
 
-  .canvas{
-    position:relative;
-    width:1080px;
-    height:1920px;
-    overflow:hidden;
-    background:var(--cream);
-    font-family:var(--font-body);
-    color:var(--ink);
-    margin:0 auto;
-    display:flex;
-    flex-direction:column;
-  }
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-  /* ---------- BACKGROUND ---------- */
+  font-family:var(--font-body);
+}
 
-  .pitch-texture{
-    position:absolute;
-    inset:0;
-    background-image:repeating-linear-gradient(
-      -35deg,
-      rgba(18,22,156,0.025) 0px,
-      rgba(18,22,156,0.025) 60px,
-      transparent 60px,
-      transparent 120px
-    );
-    pointer-events:none;
-  }
+.setup-card{
+  width:620px;
+  max-width:90vw;
+  padding:50px 45px;
+  background:white;
+  text-align:center;
+  border-radius:10px;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+}
 
-  .wash-top{
-    position:absolute;
-    top:-220px;
-    left:50%;
-    transform:translateX(-50%);
-    width:1400px;
-    height:640px;
-    background:radial-gradient(
-      ellipse at center,
-      rgba(208,2,27,0.10) 0%,
-      transparent 70%
-    );
-    pointer-events:none;
-  }
+.setup-logo{
+  width:100px;
+  height:auto;
+  margin-bottom:25px;
+}
 
-  .wash-bottom{
-    position:absolute;
-    bottom:-260px;
-    left:50%;
-    transform:translateX(-50%);
-    width:1400px;
-    height:700px;
-    background:radial-gradient(
-      ellipse at center,
-      rgba(18,22,156,0.10) 0%,
-      transparent 70%
-    );
-    pointer-events:none;
-  }
+.setup-card h1{
+  font-family:var(--font-display);
+  font-size:48px;
+  text-transform:uppercase;
+  color:var(--blue);
+  line-height:1;
+}
 
-  .confetti-layer{
-    position:absolute;
-    inset:0;
-    z-index:2;
-    pointer-events:none;
-  }
+.setup-card h1 span{
+  color:var(--red);
+}
 
-  /* ================= HEADER ================= */
+.setup-subtitle{
+  margin-top:14px;
+  color:#555;
+  font-size:16px;
+  line-height:1.5;
+}
 
-  .header{
-    position:relative;
-    z-index:3;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding-top:56px;
-  }
+.setup-button{
+  margin-top:30px;
+  width:100%;
+  padding:17px 20px;
+  border:none;
+  border-radius:5px;
+  background:var(--blue);
+  color:white;
+  font-family:var(--font-accent);
+  font-weight:700;
+  font-size:17px;
+  letter-spacing:1px;
+  cursor:pointer;
+  transition:.2s;
+}
 
-  .logo{
-    width:112px;
-    height:auto;
-    filter:drop-shadow(0 4px 10px rgba(0,0,0,0.18));
-  }
+.setup-button:hover{
+  background:var(--red);
+}
 
-  .club-name{
-    margin-top:16px;
-    font-family:var(--font-accent);
-    font-weight:700;
-    font-size:19px;
-    letter-spacing:5px;
-    color:var(--blue);
-    text-transform:uppercase;
-  }
+.folder-status{
+  margin-top:15px;
+  font-size:13px;
+  color:#777;
+}
 
-  .club-sub{
-    margin-top:5px;
-    font-family:var(--font-accent);
-    font-weight:500;
-    font-size:12px;
-    letter-spacing:2.5px;
-    color:var(--ink-soft);
-    text-transform:uppercase;
-  }
+.member-search{
+  display:none;
+  margin-top:30px;
+}
 
-  /* ================= HEADLINE ================= */
+.member-search label{
+  display:block;
+  text-align:left;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+  color:#555;
+}
 
-  .headline-zone{
-    position:relative;
-    z-index:3;
-    text-align:center;
-    padding:40px 64px 0;
-  }
+.member-search-row{
+  display:flex;
+  gap:10px;
+}
 
-  #memberNameEl{
-    font-family:var(--font-display);
-    font-weight:400;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    line-height:0.96;
-    color:var(--blue);
-    -webkit-text-stroke:0px transparent;
-    font-size:108px;
-    white-space:nowrap;
-  }
+.member-search input{
+  flex:1;
+  min-width:0;
+  padding:16px;
+  border:1px solid #ccc;
+  border-radius:5px;
+  font-family:var(--font-body);
+  font-size:16px;
+  outline:none;
+}
 
-  #memberNameEl .accent{
-    color:var(--red);
-  }
+.member-search input:focus{
+  border-color:var(--blue);
+}
 
-  .headline-sub{
-    margin-top:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:16px;
-  }
+.generate-button{
+  padding:0 22px;
+  border:none;
+  border-radius:5px;
+  background:var(--red);
+  color:white;
+  font-family:var(--font-accent);
+  font-weight:700;
+  cursor:pointer;
+}
 
-  .headline-sub .rule{
-    height:3px;
-    width:44px;
-    background:var(--red);
-  }
+.generate-button:hover{
+  background:var(--blue);
+}
 
-  .headline-sub span{
-    font-family:var(--font-accent);
-    font-weight:700;
-    font-size:24px;
-    letter-spacing:4px;
-    color:var(--ink);
-    text-transform:uppercase;
-    white-space:nowrap;
-  }
+.error-message{
+  display:none;
+  margin-top:15px;
+  padding:12px;
+  background:#fff0f2;
+  border-left:4px solid var(--red);
+  color:var(--red-dark);
+  text-align:left;
+  font-size:14px;
+  line-height:1.45;
+}
 
-  .headline-sub span .gold-word{
-    color:#D4AF37;
-    font-weight:800;
-    font-size:35px;
-    font-family:'Cinzel',serif;
-  }
+/* =========================================================
+   CANVAS
+   ========================================================= */
 
-  /* ================= PHOTO PANEL ================= */
+.canvas{
+  position:relative;
+  width:1080px;
+  height:1920px;
+  overflow:hidden;
+  background:var(--cream);
+  font-family:var(--font-body);
+  color:var(--ink);
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
 
-  .photo-zone{
-    position:relative;
-    z-index:3;
-    margin:46px auto 0;
-    width:860px;
-    height:940px;
-  }
+.pitch-texture{
+  position:absolute;
+  inset:0;
 
-  .photo-mat{
-    position:absolute;
-    inset:0;
-    background:var(--white);
-    padding:22px;
-    box-shadow:0 24px 50px -12px rgba(10,12,40,0.28);
-  }
+  background-image:repeating-linear-gradient(
+    -35deg,
+    rgba(18,22,156,0.025) 0px,
+    rgba(18,22,156,0.025) 60px,
+    transparent 60px,
+    transparent 120px
+  );
 
-  .photo-clip{
-    position:relative;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:var(--blue-pale);
-  }
+  pointer-events:none;
+}
 
-  .photo-clip img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
+.wash-top{
+  position:absolute;
+  top:-220px;
+  left:50%;
+  transform:translateX(-50%);
+  width:1400px;
+  height:640px;
 
-  .photo-clip::after{
-    content:"";
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:0;
-    height:26%;
-    background:linear-gradient(
-      0deg,
-      rgba(10,12,40,0.35) 0%,
-      rgba(10,12,40,0) 100%
-    );
-  }
+  background:radial-gradient(
+    ellipse at center,
+    rgba(208,2,27,0.10) 0%,
+    transparent 70%
+  );
 
-  .frame-overlay{
-    position:absolute;
-    inset:-26px;
-    width:calc(100% + 52px);
-    height:calc(100% + 52px);
-    pointer-events:none;
-    overflow:visible;
-  }
+  pointer-events:none;
+}
 
-  .member-tag{
-    position:absolute;
-    top:26px;
-    left:26px;
-    background:#D4AF37;
-    color:var(--white);
-    font-family:var(--font-accent);
-    font-weight:700;
-    font-size:14px;
-    letter-spacing:2px;
-    padding:9px 16px;
-    z-index:5;
-    box-shadow:0 6px 14px rgba(148,1,15,0.35);
-  }
+.wash-bottom{
+  position:absolute;
+  bottom:-260px;
+  left:50%;
+  transform:translateX(-50%);
+  width:1400px;
+  height:700px;
 
-  /* ================= QUOTE CARD ================= */
+  background:radial-gradient(
+    ellipse at center,
+    rgba(18,22,156,0.10) 0%,
+    transparent 70%
+  );
 
-  .quote-zone{
-    position:relative;
-    z-index:3;
-    margin:48px auto 0;
-    width:880px;
-  }
+  pointer-events:none;
+}
 
-  .quote-card{
-    position:relative;
-    background:var(--white);
-    border:1px solid var(--line);
-    border-left:6px solid var(--red);
-    border-radius:4px;
-    padding:42px 52px 36px 60px;
-    box-shadow:0 10px 30px -14px rgba(10,12,40,0.18);
-  }
+.confetti-layer{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+}
 
-  .quote-mark{
-    position:absolute;
-    top:-8px;
-    left:16px;
-    font-family:Georgia,'Times New Roman',serif;
-    font-size:110px;
-    line-height:1;
-    color:var(--blue);
-    opacity:0.16;
-    user-select:none;
-  }
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-  #memberQuoteEl{
-    font-family:var(--font-body);
-    font-style:italic;
-    font-weight:600;
-    font-size:31px;
-    line-height:1.42;
-    color:var(--ink);
-  }
+.header{
+  position:relative;
+  z-index:3;
 
-  .quote-attribution{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:10px;
-    margin-top:24px;
-  }
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 
-  .quote-attribution .rule{
-    width:30px;
-    height:2px;
-    background:var(--blue);
-    opacity:0.7;
-  }
+  padding-top:56px;
+}
 
-  .quote-attribution span{
-    font-family:var(--font-accent);
-    font-weight:700;
-    font-size:16px;
-    letter-spacing:1px;
-    color:var(--blue);
-  }
+.logo{
+  width:112px;
+  height:auto;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,0.18));
+}
 
-  /* ================= FOOTER ================= */
+.club-name{
+  margin-top:16px;
 
-  .footer{
-    position:relative;
-    z-index:3;
-    margin-top:auto;
-    background:var(--blue);
-    padding:36px 90px 56px;
-  }
+  font-family:var(--font-accent);
+  font-weight:700;
+  font-size:19px;
+  letter-spacing:5px;
 
-  .footer::before{
-    content:"";
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:5px;
-    background:var(--red);
-  }
+  color:var(--blue);
+  text-transform:uppercase;
+}
 
-  .footer-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
+.club-sub{
+  margin-top:5px;
 
-  .footer-col{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
+  font-family:var(--font-accent);
+  font-weight:500;
+  font-size:12px;
+  letter-spacing:2.5px;
 
-  .footer-col.right{
-    text-align:right;
-    align-items:flex-end;
-  }
+  color:var(--ink-soft);
+  text-transform:uppercase;
+}
 
-  .footer-eyebrow{
-    font-family:var(--font-accent);
-    font-weight:600;
-    font-size:12px;
-    letter-spacing:3px;
-    color:rgba(255,255,255,0.55);
-    text-transform:uppercase;
-  }
+/* =========================================================
+   HEADLINE
+   ========================================================= */
 
-  .footer-value{
-    font-family:var(--font-accent);
-    font-weight:700;
-    font-size:24px;
-    letter-spacing:0.5px;
-    color:var(--white);
-  }
+.headline-zone{
+  position:relative;
+  z-index:3;
 
-  .footer-center{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-  }
+  text-align:center;
 
-  .footer-tagline{
-    font-family:var(--font-body);
-    font-weight:700;
-    font-size:14px;
-    letter-spacing:2px;
-    color:var(--white);
-    text-transform:uppercase;
-  }
+  padding:40px 64px 0;
+}
 
-  /* ===================== MEMBER SEARCH UI ===================== */
+#memberNameEl{
+  font-family:var(--font-display);
+  font-weight:400;
 
-  #memberSearch{
-    position:fixed;
-    inset:0;
-    z-index:10000;
-    background:rgba(10,12,40,0.88);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:30px;
-  }
+  text-transform:uppercase;
+  letter-spacing:1px;
+  line-height:.96;
 
-  .search-box{
-    width:520px;
-    background:#fff;
-    padding:42px;
-    border-radius:12px;
-    box-shadow:0 30px 80px rgba(0,0,0,0.35);
-    text-align:center;
-  }
+  color:var(--blue);
 
-  .search-logo{
-    width:78px;
-    height:auto;
-    margin-bottom:20px;
-  }
+  font-size:108px;
+  white-space:nowrap;
+}
 
-  .search-box h1{
-    font-family:var(--font-accent);
-    color:var(--blue);
-    font-size:28px;
-    margin-bottom:8px;
-  }
+#memberNameEl .accent{
+  color:var(--red);
+}
 
-  .search-box p{
-    font-family:var(--font-body);
-    color:#666;
-    font-size:15px;
-    margin-bottom:24px;
-  }
+.headline-sub{
+  margin-top:14px;
 
-  #nameInput{
-    width:100%;
-    padding:16px 18px;
-    font-family:var(--font-body);
-    font-size:18px;
-    border:2px solid #ddd;
-    border-radius:6px;
-    outline:none;
-  }
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+}
 
-  #nameInput:focus{
-    border-color:var(--blue);
-  }
+.headline-sub .rule{
+  height:3px;
+  width:44px;
+  background:var(--red);
+}
 
-  #renderButton{
-    width:100%;
-    margin-top:14px;
-    padding:16px;
-    border:none;
-    border-radius:6px;
-    background:var(--blue);
-    color:#fff;
-    font-family:var(--font-accent);
-    font-size:16px;
-    font-weight:700;
-    letter-spacing:1px;
-    cursor:pointer;
-  }
+.headline-sub span{
+  font-family:var(--font-accent);
+  font-weight:700;
+  font-size:24px;
+  letter-spacing:4px;
 
-  #renderButton:hover{
-    background:var(--blue-dark);
-  }
+  color:var(--ink);
+  text-transform:uppercase;
+  white-space:nowrap;
+}
 
-  #searchError{
-    color:var(--red);
-    font-family:var(--font-body);
-    font-size:14px;
-    font-weight:600;
-    margin-top:16px;
-    min-height:20px;
-  }
+.headline-sub span .gold-word{
+  color:#D4AF37;
+  font-weight:800;
+  font-size:35px;
+  font-family:'Cinzel',serif;
+}
 
-  #loadingText{
-    display:none;
-    margin-top:15px;
-    font-family:var(--font-body);
-    font-size:14px;
-    color:#555;
-  }
+/* =========================================================
+   PHOTO
+   ========================================================= */
 
-  /* Hide flyer until member is loaded */
-  #canvas{
-    display:none;
-  }
+.photo-zone{
+  position:relative;
+  z-index:3;
+
+  margin:46px auto 0;
+
+  width:860px;
+  height:940px;
+}
+
+.photo-mat{
+  position:absolute;
+  inset:0;
+
+  background:var(--white);
+  padding:22px;
+
+  box-shadow:0 24px 50px -12px rgba(10,12,40,.28);
+}
+
+.photo-clip{
+  position:relative;
+
+  width:100%;
+  height:100%;
+
+  overflow:hidden;
+
+  background:var(--blue-pale);
+}
+
+.photo-clip img{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+  display:block;
+}
+
+.photo-clip::after{
+  content:"";
+
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+
+  height:26%;
+
+  background:linear-gradient(
+    0deg,
+    rgba(10,12,40,.35) 0%,
+    rgba(10,12,40,0) 100%
+  );
+}
+
+.frame-overlay{
+  position:absolute;
+  inset:-26px;
+
+  width:calc(100% + 52px);
+  height:calc(100% + 52px);
+
+  pointer-events:none;
+  overflow:visible;
+}
+
+.member-tag{
+  position:absolute;
+
+  top:26px;
+  left:26px;
+
+  background:#D4AF37;
+  color:white;
+
+  font-family:var(--font-accent);
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:2px;
+
+  padding:9px 16px;
+
+  z-index:5;
+
+  box-shadow:0 6px 14px rgba(148,1,15,.35);
+}
+
+/* =========================================================
+   QUOTE
+   ========================================================= */
+
+.quote-zone{
+  position:relative;
+  z-index:3;
+
+  margin:48px auto 0;
+
+  width:880px;
+}
+
+.quote-card{
+  position:relative;
+
+  background:white;
+
+  border:1px solid var(--line);
+  border-left:6px solid var(--red);
+  border-radius:4px;
+
+  padding:42px 52px 36px 60px;
+
+  box-shadow:0 10px 30px -14px rgba(10,12,40,.18);
+}
+
+.quote-mark{
+  position:absolute;
+
+  top:-8px;
+  left:16px;
+
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:110px;
+  line-height:1;
+
+  color:var(--blue);
+  opacity:.16;
+
+  user-select:none;
+}
+
+#memberQuoteEl{
+  font-family:var(--font-body);
+  font-style:italic;
+  font-weight:600;
+
+  font-size:31px;
+  line-height:1.42;
+
+  color:var(--ink);
+}
+
+.quote-attribution{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+
+  gap:10px;
+  margin-top:24px;
+}
+
+.quote-attribution .rule{
+  width:30px;
+  height:2px;
+
+  background:var(--blue);
+  opacity:.7;
+}
+
+.quote-attribution span{
+  font-family:var(--font-accent);
+  font-weight:700;
+
+  font-size:16px;
+  letter-spacing:1px;
+
+  color:var(--blue);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer{
+  position:relative;
+  z-index:3;
+
+  margin-top:auto;
+
+  background:var(--blue);
+
+  padding:36px 90px 56px;
+}
+
+.footer::before{
+  content:"";
+
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+
+  height:5px;
+
+  background:var(--red);
+}
+
+.footer-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.footer-col{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.footer-col.right{
+  text-align:right;
+  align-items:flex-end;
+}
+
+.footer-eyebrow{
+  font-family:var(--font-accent);
+  font-weight:600;
+
+  font-size:12px;
+  letter-spacing:3px;
+
+  color:rgba(255,255,255,.55);
+
+  text-transform:uppercase;
+}
+
+.footer-value{
+  font-family:var(--font-accent);
+  font-weight:700;
+
+  font-size:24px;
+  letter-spacing:.5px;
+
+  color:white;
+}
+
+.footer-center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+}
+
+.footer-tagline{
+  font-family:var(--font-body);
+  font-weight:700;
+
+  font-size:14px;
+  letter-spacing:2px;
+
+  color:white;
+  text-transform:uppercase;
+}
 
 </style>
-
 </head>
 
 <body>
 
-<!-- ================================================================
-     MEMBER SEARCH
-     ================================================================ -->
+<!-- =========================================================
+     SETUP SCREEN
+     ========================================================= -->
 
-<div id="memberSearch">
+<div id="setupScreen">
 
-  <div class="search-box">
+  <div class="setup-card">
 
-```
-<img
-  class="search-logo"
-  src="NDFC_Official_Logo.png"
-  alt="Nepal Dallas Football Club logo"
->
+    <img
+      src="NDFC_Official_Logo.png"
+      class="setup-logo"
+      alt="NDFC Logo"
+    >
 
-<h1>NDFC GOLD MEMBER</h1>
+    <h1>
+      NDFC <span>Gold</span>
+    </h1>
 
-<p>
-  Enter the member's full name.
-  <br>
-  Example: <strong>Sajan Gautam</strong>
-</p>
+    <div class="setup-subtitle">
+      Select your NDFC Gold Member folder to begin.
+      <br>
+      The flyer will automatically find the member's photo and quote.
+    </div>
 
-<input
-  id="nameInput"
-  type="text"
-  placeholder="First name Last name"
-  autocomplete="off"
-  autofocus
->
+    <button
+      class="setup-button"
+      id="folderButton"
+    >
+      SELECT NDFC FOLDER
+    </button>
 
-<button id="renderButton">
-  GENERATE FLYER
-</button>
+    <div
+      class="folder-status"
+      id="folderStatus"
+    >
+      No folder selected
+    </div>
 
-<div id="loadingText">
-  Loading member information...
-</div>
+    <div
+      class="member-search"
+      id="memberSearch"
+    >
 
-<div id="searchError"></div>
-```
+      <label for="memberInput">
+        Member Name
+      </label>
+
+      <div class="member-search-row">
+
+        <input
+          type="text"
+          id="memberInput"
+          placeholder="e.g. Sajan Gautam"
+          autocomplete="off"
+        >
+
+        <button
+          class="generate-button"
+          id="generateButton"
+        >
+          GENERATE
+        </button>
+
+      </div>
+
+    </div>
+
+    <div
+      class="error-message"
+      id="errorMessage"
+    ></div>
 
   </div>
 
 </div>
 
-<!-- ================================================================
-     FLYER
-     ================================================================ -->
 
-<div class="canvas" id="canvas">
+<!-- =========================================================
+     FLYER
+     ========================================================= -->
+
+<div
+  class="canvas"
+  id="canvas"
+  style="display:none;"
+>
 
   <div class="pitch-texture"></div>
   <div class="wash-top"></div>
   <div class="wash-bottom"></div>
 
-  <!-- ================= CONFETTI ================= -->
+  <svg
+    class="confetti-layer"
+    viewBox="0 0 1080 1920"
+    xmlns="http://www.w3.org/2000/svg"
+  >
 
-<svg
-class="confetti-layer"
-viewBox="0 0 1080 1920"
-xmlns="http://www.w3.org/2000/svg"
+    <g fill="#F3DE8C" opacity=".8">
 
->
+      <polygon
+        points="60,140 82,132 90,156 66,166"
+        transform="rotate(18 75 150)"
+      />
 
-```
-<g fill="#F3DE8C" opacity="0.8">
-  <polygon points="60,140 82,132 90,156 66,166"
-           transform="rotate(18 75 150)"/>
-  <polygon points="960,90 984,80 992,106 966,116"
-           transform="rotate(-12 978 98)"/>
-  <polygon points="120,860 140,850 150,872 128,884"
-           transform="rotate(40 135 867)"/>
-  <polygon points="940,1000 962,992 970,1016 946,1026"
-           transform="rotate(-25 955 1009)"/>
-</g>
+      <polygon
+        points="960,90 984,80 992,106 966,116"
+        transform="rotate(-12 978 98)"
+      />
 
-<g fill="#D4AF37" opacity="0.85">
-  <polygon points="40,300 66,292 74,318 48,328"
-           transform="rotate(-20 57 310)"/>
-  <polygon points="1000,260 1024,252 1032,276 1008,286"
-           transform="rotate(15 1016 269)"/>
-  <polygon points="90,1150 112,1142 120,1166 98,1176"
-           transform="rotate(30 105 1159)"/>
-  <polygon points="970,1300 992,1292 1000,1316 978,1326"
-           transform="rotate(-35 985 1309)"/>
-  <circle cx="150" cy="200" r="7"/>
-  <circle cx="930" cy="180" r="6"/>
-  <circle cx="70" cy="1000" r="6"/>
-  <circle cx="1010" cy="1120" r="7"/>
-</g>
+      <polygon
+        points="120,860 140,850 150,872 128,884"
+        transform="rotate(40 135 867)"
+      />
 
-<g fill="#9C7A1E" opacity="0.6">
-  <polygon points="180,60 198,54 204,72 186,78"
-           transform="rotate(10 192 66)"/>
-  <polygon points="880,60 898,54 904,72 886,78"
-           transform="rotate(-16 892 66)"/>
-  <circle cx="200" cy="920" r="5"/>
-  <circle cx="880" cy="960" r="5"/>
-  <circle cx="140" cy="1400" r="5"/>
-  <circle cx="940" cy="1420" r="5"/>
-</g>
+      <polygon
+        points="940,1000 962,992 970,1016 946,1026"
+        transform="rotate(-25 955 1009)"
+      />
 
-<g fill="#D0021B" opacity="0.75">
-  <polygon points="30,60 52,52 60,76 38,84"
-           transform="rotate(-15 45 68)"/>
-  <polygon points="1010,700 1032,692 1040,716 1018,724"
-           transform="rotate(22 1025 708)"/>
-  <polygon points="60,1500 82,1492 90,1516 68,1524"
-           transform="rotate(-30 75 1508)"/>
-  <circle cx="1000" cy="150" r="6"/>
-  <circle cx="120" cy="1650" r="6"/>
-</g>
+    </g>
 
-<g fill="#12169C" opacity="0.75">
-  <polygon points="900,40 922,32 930,56 908,64"
-           transform="rotate(25 915 48)"/>
-  <polygon points="40,780 62,772 70,796 48,804"
-           transform="rotate(-18 55 788)"/>
-  <polygon points="1000,1550 1022,1542 1030,1566 1008,1574"
-           transform="rotate(14 1015 1558)"/>
-  <circle cx="80" cy="120" r="6"/>
-  <circle cx="960" cy="1680" r="6"/>
-</g>
-```
+    <g fill="#D4AF37" opacity=".85">
+
+      <polygon
+        points="40,300 66,292 74,318 48,328"
+        transform="rotate(-20 57 310)"
+      />
+
+      <polygon
+        points="1000,260 1024,252 1032,276 1008,286"
+        transform="rotate(15 1016 269)"
+      />
+
+      <polygon
+        points="90,1150 112,1142 120,1166 98,1176"
+        transform="rotate(30 105 1159)"
+      />
+
+      <polygon
+        points="970,1300 992,1292 1000,1316 978,1326"
+        transform="rotate(-35 985 1309)"
+      />
+
+      <circle cx="150" cy="200" r="7"/>
+      <circle cx="930" cy="180" r="6"/>
+      <circle cx="70" cy="1000" r="6"/>
+      <circle cx="1010" cy="1120" r="7"/>
+
+    </g>
+
+    <g fill="#9C7A1E" opacity=".6">
+
+      <polygon
+        points="180,60 198,54 204,72 186,78"
+        transform="rotate(10 192 66)"
+      />
+
+      <polygon
+        points="880,60 898,54 904,72 886,78"
+        transform="rotate(-16 892 66)"
+      />
+
+      <circle cx="200" cy="920" r="5"/>
+      <circle cx="880" cy="960" r="5"/>
+      <circle cx="140" cy="1400" r="5"/>
+      <circle cx="940" cy="1420" r="5"/>
+
+    </g>
+
+    <g fill="#D0021B" opacity=".75">
+
+      <polygon
+        points="30,60 52,52 60,76 38,84"
+        transform="rotate(-15 45 68)"
+      />
+
+      <polygon
+        points="1010,700 1032,692 1040,716 1018,724"
+        transform="rotate(22 1025 708)"
+      />
+
+      <polygon
+        points="60,1500 82,1492 90,1516 68,1524"
+        transform="rotate(-30 75 1508)"
+      />
+
+      <circle cx="1000" cy="150" r="6"/>
+      <circle cx="120" cy="1650" r="6"/>
+
+    </g>
+
+    <g fill="#12169C" opacity=".75">
+
+      <polygon
+        points="900,40 922,32 930,56 908,64"
+        transform="rotate(25 915 48)"
+      />
+
+      <polygon
+        points="40,780 62,772 70,796 48,804"
+        transform="rotate(-18 55 788)"
+      />
+
+      <polygon
+        points="1000,1550 1022,1542 1030,1566 1008,1574"
+        transform="rotate(14 1015 1558)"
+      />
+
+      <circle cx="80" cy="120" r="6"/>
+      <circle cx="960" cy="1680" r="6"/>
+
+    </g>
 
   </svg>
 
-  <!-- ================= HEADER ================= -->
+
+  <!-- HEADER -->
 
   <div class="header">
 
-```
-<img
-  class="logo"
-  src="NDFC_Official_Logo.png"
-  alt="Nepal Dallas Football Club logo"
->
+    <img
+      class="logo"
+      src="NDFC_Official_Logo.png"
+      alt="NDFC Logo"
+    >
 
-<div class="club-name">
-  Nepal Dallas FC
-</div>
+    <div class="club-name">
+      NEPAL DALLAS FC
+    </div>
 
-<div class="club-sub">
-  Estd. 2022 &nbsp;·&nbsp; Dallas, Texas
-</div>
-```
+    <div class="club-sub">
+      ESTD. 2022 · DALLAS, TEXAS
+    </div>
 
   </div>
 
-  <!-- ================= HEADLINE ================= -->
+
+  <!-- HEADLINE -->
 
   <div class="headline-zone">
 
-```
-<div id="memberNameEl">
-  Member Name
-</div>
+    <div id="memberNameEl">
+      MEMBER NAME
+    </div>
 
-<div class="headline-sub">
+    <div class="headline-sub">
 
-  <div class="rule"></div>
+      <div class="rule"></div>
 
-  <span>
-    IS AN NDFC
-    <span class="gold-word">GOLD</span>
-    MEMBER
-  </span>
+      <span>
+        IS AN NDFC
+        <span class="gold-word">
+          GOLD
+        </span>
+        MEMBER
+      </span>
 
-  <div class="rule"></div>
+      <div class="rule"></div>
 
-</div>
-```
+    </div>
 
   </div>
 
-  <!-- ================= PHOTO ================= -->
+
+  <!-- PHOTO -->
 
   <div class="photo-zone">
 
-```
-<div class="photo-mat">
+    <div class="photo-mat">
 
-  <div class="photo-clip">
+      <div class="photo-clip">
 
-    <img
-      id="memberPhotoEl"
-      src=""
-      alt="Member photo"
+        <img
+          id="memberPhotoEl"
+          src=""
+          alt="Member photo"
+        >
+
+      </div>
+
+    </div>
+
+
+    <svg
+      class="frame-overlay"
+      viewBox="0 0 912 992"
+      xmlns="http://www.w3.org/2000/svg"
     >
+
+      <defs>
+
+        <filter
+          id="roughBlue"
+          x="-20%"
+          y="-20%"
+          width="140%"
+          height="140%"
+        >
+
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency=".012 .018"
+            numOctaves="2"
+            seed="4"
+            result="n"
+          />
+
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="n"
+            scale="14"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+
+        </filter>
+
+
+        <filter
+          id="roughRed"
+          x="-20%"
+          y="-20%"
+          width="140%"
+          height="140%"
+        >
+
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency=".015 .02"
+            numOctaves="2"
+            seed="11"
+            result="n2"
+          />
+
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="n2"
+            scale="10"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+
+        </filter>
+
+      </defs>
+
+
+      <rect
+        x="20"
+        y="20"
+        width="872"
+        height="952"
+        fill="none"
+        stroke="#12169C"
+        stroke-width="13"
+        filter="url(#roughBlue)"
+      />
+
+      <rect
+        x="34"
+        y="34"
+        width="844"
+        height="924"
+        fill="none"
+        stroke="#D0021B"
+        stroke-width="6"
+        filter="url(#roughRed)"
+      />
+
+    </svg>
+
+
+    <div class="member-tag">
+      NDFC · GOLD
+    </div>
 
   </div>
 
-</div>
 
-
-<svg
-  class="frame-overlay"
-  viewBox="0 0 912 992"
-  xmlns="http://www.w3.org/2000/svg"
->
-
-  <defs>
-
-    <filter
-      id="roughBlue"
-      x="-20%"
-      y="-20%"
-      width="140%"
-      height="140%"
-    >
-
-      <feTurbulence
-        type="fractalNoise"
-        baseFrequency="0.012 0.018"
-        numOctaves="2"
-        seed="4"
-        result="n"
-      />
-
-      <feDisplacementMap
-        in="SourceGraphic"
-        in2="n"
-        scale="14"
-        xChannelSelector="R"
-        yChannelSelector="G"
-      />
-
-    </filter>
-
-
-    <filter
-      id="roughRed"
-      x="-20%"
-      y="-20%"
-      width="140%"
-      height="140%"
-    >
-
-      <feTurbulence
-        type="fractalNoise"
-        baseFrequency="0.015 0.02"
-        numOctaves="2"
-        seed="11"
-        result="n2"
-      />
-
-      <feDisplacementMap
-        in="SourceGraphic"
-        in2="n2"
-        scale="10"
-        xChannelSelector="R"
-        yChannelSelector="G"
-      />
-
-    </filter>
-
-  </defs>
-
-
-  <rect
-    x="20"
-    y="20"
-    width="872"
-    height="952"
-    fill="none"
-    stroke="#12169C"
-    stroke-width="13"
-    filter="url(#roughBlue)"
-  />
-
-  <rect
-    x="34"
-    y="34"
-    width="844"
-    height="924"
-    fill="none"
-    stroke="#D0021B"
-    stroke-width="6"
-    filter="url(#roughRed)"
-  />
-
-</svg>
-
-
-<div class="member-tag">
-  NDFC · GOLD
-</div>
-```
-
-  </div>
-
-  <!-- ================= QUOTE ================= -->
+  <!-- QUOTE -->
 
   <div class="quote-zone">
 
-```
-<div class="quote-card">
+    <div class="quote-card">
 
-  <div class="quote-mark">
-    &rdquo;
-  </div>
+      <div class="quote-mark">
+        &rdquo;
+      </div>
 
-  <div id="memberQuoteEl">
-    Member quote goes here.
-  </div>
+      <div id="memberQuoteEl">
+        Member quote goes here.
+      </div>
 
-  <div class="quote-attribution">
+      <div class="quote-attribution">
 
-    <div class="rule"></div>
+        <div class="rule"></div>
 
-    <span id="handleEl">
-      @nepaldallasfc
-    </span>
+        <span id="handleEl">
+          @nepaldallasfc
+        </span>
 
-  </div>
+      </div>
 
-</div>
-```
+    </div>
 
   </div>
 
-  <!-- ================= FOOTER ================= -->
+
+  <!-- FOOTER -->
 
   <div class="footer">
 
-```
-<div class="footer-row">
+    <div class="footer-row">
 
-  <div class="footer-col left">
+      <div class="footer-col left">
 
-    <div class="footer-eyebrow">
-      Membership
-    </div>
+        <div class="footer-eyebrow">
+          Membership
+        </div>
 
-    <div class="footer-value" id="designationEl">
-      Gold
-    </div>
+        <div
+          class="footer-value"
+          id="designationEl"
+        >
+          Gold
+        </div>
 
-  </div>
-
-
-  <div class="footer-center">
-
-    <div class="footer-tagline" id="taglineEl">
-      Home Away From Home
-    </div>
-
-  </div>
+      </div>
 
 
-  <div class="footer-col right">
+      <div class="footer-center">
 
-    <div class="footer-eyebrow">
-      Season
-    </div>
+        <div
+          class="footer-tagline"
+          id="taglineEl"
+        >
+          Home Away From Home
+        </div>
 
-    <div class="footer-value" id="seasonEl">
-      2026/27
+      </div>
+
+
+      <div class="footer-col right">
+
+        <div class="footer-eyebrow">
+          Season
+        </div>
+
+        <div
+          class="footer-value"
+          id="seasonEl"
+        >
+          2026/27
+        </div>
+
+      </div>
+
     </div>
 
   </div>
 
 </div>
-```
 
-  </div>
-
-</div>
 
 <script>
 
-/* ============================================================================
-   NDFC GOLD MEMBER AUTOMATIC LOOKUP
-   ============================================================================
+/* =========================================================
+   SETTINGS
+   ========================================================= */
 
-   Folder structure:
-
-   member-images/
-       Sajan_Gautam.jpeg
-       John_Doe.jpg
-       Jane_Doe.png
-
-   member-quotes/
-       Sajan_Gautam.txt
-       John_Doe.txt
-       Jane_Doe.txt
-
-   User enters:
-
-       Sajan Gautam
-
-   Code searches:
-
-       member-images/Sajan_Gautam.jpg
-       member-images/Sajan_Gautam.jpeg
-       member-images/Sajan_Gautam.png
-
-   and:
-
-       member-quotes/Sajan_Gautam.txt
-
-   ============================================================================ */
-
-
-/* ---------- CONSTANTS ---------- */
-
-const IMAGE_FOLDER = "member-images/";
-const QUOTE_FOLDER = "member-quotes/";
+const IMAGE_FOLDER = "member-images";
+const QUOTE_FOLDER = "member-quotes";
 
 const IMAGE_EXTENSIONS = [
   ".jpg",
@@ -925,398 +1104,577 @@ const IMAGE_EXTENSIONS = [
   ".png"
 ];
 
-const DEFAULT_PHOTO_POSITION = "center 40%";
 
-const MEMBER_CONFIG = {
-  designation: "Gold",
-  season: "2026/27",
-  socialHandle: "@nepaldallasfc",
-  tagline: "Home Away From Home"
-};
+/* =========================================================
+   STATE
+   ========================================================= */
+
+let selectedFolder = null;
 
 
-/* ============================================================================
-   PLACEHOLDER IMAGE
-   ============================================================================ */
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
-const PLACEHOLDER_PHOTO =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(`
+const setupScreen =
+  document.getElementById("setupScreen");
 
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="860"
-      height="940"
-    >
+const folderButton =
+  document.getElementById("folderButton");
 
-      <defs>
+const folderStatus =
+  document.getElementById("folderStatus");
 
-        <linearGradient
-          id="g"
-          x1="0"
-          y1="0"
-          x2="0"
-          y2="1"
-        >
+const memberSearch =
+  document.getElementById("memberSearch");
 
-          <stop
-            offset="0"
-            stop-color="#EEF0FA"
-          />
+const memberInput =
+  document.getElementById("memberInput");
 
-          <stop
-            offset="1"
-            stop-color="#DBDFF3"
-          />
+const generateButton =
+  document.getElementById("generateButton");
 
-        </linearGradient>
+const errorMessage =
+  document.getElementById("errorMessage");
 
-      </defs>
+const canvas =
+  document.getElementById("canvas");
 
 
-      <rect
-        width="860"
-        height="940"
-        fill="url(#g)"
-      />
-
-      <circle
-        cx="430"
-        cy="360"
-        r="150"
-        fill="#C4CAEE"
-      />
-
-      <path
-        d="
-          M 160 940
-          C 160 680 290 560 430 560
-          C 570 560 700 680 700 940
-          Z
-        "
-        fill="#C4CAEE"
-      />
-
-      <text
-        x="430"
-        y="900"
-        font-family="Arial, sans-serif"
-        font-size="22"
-        fill="#7E86B8"
-        text-anchor="middle"
-        letter-spacing="2"
-      >
-        REPLACE WITH MEMBER PHOTO
-      </text>
-
-    </svg>
-
-  `);
-
-
-/* ============================================================================
-   NAME NORMALIZATION
-   ============================================================================ */
-
-function normalizeName(name){
-
-  return name
-    .trim()
-    .replace(/\s+/g, " ");
-
-}
-
-
-/* ============================================================================
-   CONVERT:
-
-   "Sajan Gautam"
-
-   INTO:
-
-   "Sajan_Gautam"
-   ============================================================================ */
+/* =========================================================
+   NORMALIZE MEMBER NAME
+   ========================================================= */
 
 function nameToFileBase(name){
 
-  return normalizeName(name)
-    .split(" ")
-    .map(part => part.trim())
-    .filter(Boolean)
-    .join("_");
+  return name
+    .trim()
+    .replace(/\s+/g, "_")
+    .replace(/[^\w\-]/g, "");
 
 }
 
 
-/* ============================================================================
-   NAME COLORING
-   ============================================================================ */
+/* =========================================================
+   CASE-INSENSITIVE FILE MATCHING
+   ========================================================= */
 
-function splitNameForColor(name){
+function findFileInDirectory(
+  directoryHandle,
+  targetName
+){
 
-  const parts = name
-    .trim()
-    .split(/\s+/);
+  return (async () => {
+
+    const wanted =
+      targetName.toLowerCase();
+
+    for await (
+      const [name, handle]
+      of directoryHandle.entries()
+    ){
+
+      if(
+        handle.kind === "file" &&
+        name.toLowerCase() === wanted
+      ){
+
+        return handle;
+
+      }
+
+    }
+
+    return null;
+
+  })();
+
+}
 
 
-  if(parts.length === 1){
+/* =========================================================
+   FIND SUBFOLDER
+   ========================================================= */
 
-    return name.toUpperCase();
+async function getSubfolder(
+  parentHandle,
+  folderName
+){
+
+  try{
+
+    return await parentHandle.getDirectoryHandle(
+      folderName
+    );
+
+  }catch{
+
+    return null;
 
   }
 
-
-  const first = parts[0];
-
-  const rest = parts
-    .slice(1)
-    .join(" ");
+}
 
 
-  return `
-    ${first.toUpperCase()}
-    <span class="accent">
-      ${rest.toUpperCase()}
-    </span>
-  `;
+/* =========================================================
+   READ TEXT FILE
+   ========================================================= */
+
+async function readTextFile(
+  fileHandle
+){
+
+  const file =
+    await fileHandle.getFile();
+
+  return await file.text();
 
 }
 
 
-/* ============================================================================
-   CHECK WHETHER AN IMAGE EXISTS
-   ============================================================================ */
+/* =========================================================
+   FIND MEMBER IMAGE
+   ========================================================= */
 
-function findMemberImage(baseName){
+async function findMemberImage(
+  imageFolder,
+  baseName
+){
 
-  return new Promise((resolve) => {
+  for(
+    const extension of IMAGE_EXTENSIONS
+  ){
 
-    let currentIndex = 0;
+    const filename =
+      baseName + extension;
+
+    const handle =
+      await findFileInDirectory(
+        imageFolder,
+        filename
+      );
+
+    if(handle){
+
+      return handle;
+
+    }
+
+  }
+
+  return null;
+
+}
 
 
-    function tryNextImage(){
+/* =========================================================
+   OPEN FOLDER
+   ========================================================= */
 
-      if(currentIndex >= IMAGE_EXTENSIONS.length){
+folderButton.addEventListener(
+  "click",
+  async () => {
 
-        resolve(null);
+    try{
+
+      if(
+        !window.showDirectoryPicker
+      ){
+
+        showError(
+          "Your browser does not support folder access. Please use the latest Google Chrome or Microsoft Edge."
+        );
 
         return;
 
       }
 
 
-      const extension =
-        IMAGE_EXTENSIONS[currentIndex];
-
-      currentIndex++;
+      selectedFolder =
+        await window.showDirectoryPicker();
 
 
-      const imagePath =
-        IMAGE_FOLDER +
-        baseName +
-        extension;
+      /* Ask for permission */
+
+      if(
+        selectedFolder.requestPermission
+      ){
+
+        const permission =
+          await selectedFolder.requestPermission({
+            mode:"read"
+          });
+
+        if(permission !== "granted"){
+
+          showError(
+            "Folder permission was not granted."
+          );
+
+          return;
+
+        }
+
+      }
 
 
-      const img = new Image();
+      /* Find required folders */
+
+      const imageFolder =
+        await getSubfolder(
+          selectedFolder,
+          IMAGE_FOLDER
+        );
+
+      const quoteFolder =
+        await getSubfolder(
+          selectedFolder,
+          QUOTE_FOLDER
+        );
 
 
-      img.onload = function(){
+      if(!imageFolder){
 
-        resolve(imagePath);
+        showError(
+          'Could not find the "member-images" folder.'
+        );
 
-      };
+        return;
 
-
-      img.onerror = function(){
-
-        tryNextImage();
-
-      };
+      }
 
 
-      img.src = imagePath;
+      if(!quoteFolder){
+
+        showError(
+          'Could not find the "member-quotes" folder.'
+        );
+
+        return;
+
+      }
+
+
+      folderStatus.textContent =
+        "✓ NDFC folder loaded successfully";
+
+
+      folderStatus.style.color =
+        "#16833a";
+
+
+      memberSearch.style.display =
+        "block";
+
+
+      errorMessage.style.display =
+        "none";
+
+
+      memberInput.focus();
+
+    }catch(error){
+
+      if(
+        error.name === "AbortError"
+      ){
+
+        return;
+
+      }
+
+      showError(
+        "Could not open the selected folder."
+      );
+
+      console.error(error);
 
     }
 
-
-    tryNextImage();
-
-  });
-
-}
+  }
+);
 
 
-/* ============================================================================
-   LOAD QUOTE FILE
-   ============================================================================ */
+/* =========================================================
+   GENERATE MEMBER
+   ========================================================= */
 
-async function loadMemberQuote(baseName){
-
-  const quotePath =
-    QUOTE_FOLDER +
-    baseName +
-    ".txt";
+generateButton.addEventListener(
+  "click",
+  generateMember
+);
 
 
-  const response =
-    await fetch(quotePath);
+memberInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Enter"){
+
+      generateMember();
+
+    }
+
+  }
+);
 
 
-  if(!response.ok){
+/* =========================================================
+   GENERATE
+   ========================================================= */
 
-    throw new Error(
-      "Quote file not found."
+async function generateMember(){
+
+  clearError();
+
+
+  if(!selectedFolder){
+
+    showError(
+      "Please select your NDFC folder first."
     );
+
+    return;
 
   }
 
 
-  const quote =
-    await response.text();
+  const memberName =
+    memberInput.value.trim();
 
 
-  return quote.trim();
+  if(!memberName){
 
-}
-
-
-/* ============================================================================
-   LOAD MEMBER DATA
-   ============================================================================ */
-
-async function loadMember(name){
-
-  const cleanName =
-    normalizeName(name);
-
-
-  if(!cleanName){
-
-    throw new Error(
+    showError(
       "Please enter a member name."
     );
+
+    return;
 
   }
 
 
   const baseName =
-    nameToFileBase(cleanName);
+    nameToFileBase(memberName);
 
-
-  /* Find photo */
-
-  const memberImage =
-    await findMemberImage(baseName);
-
-
-  if(!memberImage){
-
-    throw new Error(
-      `No photo found for "${cleanName}".`
-    );
-
-  }
-
-
-  /* Load quote */
-
-  let memberQuote;
 
   try{
 
-    memberQuote =
-      await loadMemberQuote(baseName);
+    const imageFolder =
+      await getSubfolder(
+        selectedFolder,
+        IMAGE_FOLDER
+      );
+
+    const quoteFolder =
+      await getSubfolder(
+        selectedFolder,
+        QUOTE_FOLDER
+      );
+
+
+    /* ---------------------------------------------
+       FIND IMAGE
+       --------------------------------------------- */
+
+    const imageHandle =
+      await findMemberImage(
+        imageFolder,
+        baseName
+      );
+
+
+    if(!imageHandle){
+
+      showError(
+        `No image found for "${memberName}".<br><br>` +
+        `Expected something like:<br>` +
+        `<strong>${baseName}.jpg</strong>, ` +
+        `<strong>${baseName}.jpeg</strong>, or ` +
+        `<strong>${baseName}.png</strong>`
+      );
+
+      return;
+
+    }
+
+
+    /* ---------------------------------------------
+       FIND QUOTE
+       --------------------------------------------- */
+
+    const quoteHandle =
+      await findFileInDirectory(
+        quoteFolder,
+        baseName + ".txt"
+      );
+
+
+    if(!quoteHandle){
+
+      showError(
+        `No quote file found for "${memberName}".<br><br>` +
+        `Expected:<br>` +
+        `<strong>${baseName}.txt</strong>`
+      );
+
+      return;
+
+    }
+
+
+    /* ---------------------------------------------
+       READ QUOTE
+       --------------------------------------------- */
+
+    const quoteText =
+      await readTextFile(
+        quoteHandle
+      );
+
+
+    /*
+       Use the first non-empty line.
+
+       So if Sajan_Gautam.txt contains:
+
+       Best Club.
+
+       it becomes:
+
+       Best Club.
+    */
+
+    const quote =
+      quoteText
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .find(line => line.length > 0);
+
+
+    if(!quote){
+
+      showError(
+        `"${baseName}.txt" is empty.`
+      );
+
+      return;
+
+    }
+
+
+    /* ---------------------------------------------
+       CREATE IMAGE URL
+       --------------------------------------------- */
+
+    const imageFile =
+      await imageHandle.getFile();
+
+    const imageURL =
+      URL.createObjectURL(
+        imageFile
+      );
+
+
+    /* ---------------------------------------------
+       LOAD FLYER
+       --------------------------------------------- */
+
+    applyMemberData({
+
+      memberName:memberName,
+
+      memberPhoto:imageURL,
+
+      memberQuote:quote,
+
+      photoPosition:"center 40%",
+
+      designation:"Gold",
+
+      season:"2026/27",
+
+      socialHandle:"@nepaldallasfc",
+
+      tagline:"Home Away From Home"
+
+    });
+
+
+    canvas.style.display =
+      "flex";
+
+    setupScreen.style.display =
+      "none";
+
+
+    renderFlyer();
+
 
   }catch(error){
 
-    throw new Error(
-      `No quote file found for "${cleanName}".`
+    console.error(error);
+
+    showError(
+      "Something went wrong while loading this member."
     );
 
   }
-
-
-  if(!memberQuote){
-
-    throw new Error(
-      `The quote file for "${cleanName}" is empty.`
-    );
-
-  }
-
-
-  return {
-
-    memberName: cleanName,
-
-    memberPhoto: memberImage,
-
-    photoPosition:
-      DEFAULT_PHOTO_POSITION,
-
-    memberQuote: memberQuote,
-
-    designation:
-      MEMBER_CONFIG.designation,
-
-    season:
-      MEMBER_CONFIG.season,
-
-    socialHandle:
-      MEMBER_CONFIG.socialHandle,
-
-    tagline:
-      MEMBER_CONFIG.tagline
-
-  };
 
 }
 
 
-/* ============================================================================
-   APPLY MEMBER DATA TO FLYER
-   ============================================================================ */
+/* =========================================================
+   APPLY MEMBER DATA
+   ========================================================= */
 
-function applyMemberData(member){
+function applyMemberData(data){
 
-  document
-    .getElementById("memberNameEl")
-    .innerHTML =
-      splitNameForColor(
-        member.memberName
-      );
+  const nameEl =
+    document.getElementById(
+      "memberNameEl"
+    );
 
-
-  document
-    .getElementById("memberQuoteEl")
-    .textContent =
-      "\u201C" +
-      member.memberQuote +
-      "\u201D";
+  const quoteEl =
+    document.getElementById(
+      "memberQuoteEl"
+    );
 
 
-  document
-    .getElementById("designationEl")
-    .textContent =
-      member.designation;
+  nameEl.innerHTML =
+    splitNameForColor(
+      data.memberName
+    );
 
 
-  document
-    .getElementById("seasonEl")
-    .textContent =
-      member.season;
+  quoteEl.textContent =
+    "\u201C" +
+    data.memberQuote +
+    "\u201D";
 
 
-  document
-    .getElementById("handleEl")
-    .textContent =
-      member.socialHandle;
+  document.getElementById(
+    "designationEl"
+  ).textContent =
+    data.designation;
 
 
-  document
-    .getElementById("taglineEl")
-    .textContent =
-      member.tagline;
+  document.getElementById(
+    "seasonEl"
+  ).textContent =
+    data.season;
+
+
+  document.getElementById(
+    "handleEl"
+  ).textContent =
+    data.socialHandle;
+
+
+  document.getElementById(
+    "taglineEl"
+  ).textContent =
+    data.tagline;
 
 
   const img =
@@ -1326,25 +1684,53 @@ function applyMemberData(member){
 
 
   img.src =
-    member.memberPhoto ||
-    PLACEHOLDER_PHOTO;
+    data.memberPhoto;
 
 
   img.style.objectPosition =
-    member.photoPosition ||
-    DEFAULT_PHOTO_POSITION;
-
-
-  img.alt =
-    member.memberName +
-    " member photo";
+    data.photoPosition ||
+    "center 20%";
 
 }
 
 
-/* ============================================================================
-   AUTO-FIT LONG NAME
-   ============================================================================ */
+/* =========================================================
+   SPLIT NAME COLORS
+   ========================================================= */
+
+function splitNameForColor(name){
+
+  const parts =
+    name.trim().split(/\s+/);
+
+
+  if(parts.length === 1){
+
+    return name.toUpperCase();
+
+  }
+
+
+  const first =
+    parts[0];
+
+  const rest =
+    parts.slice(1).join(" ");
+
+
+  return (
+    first.toUpperCase() +
+    ' <span class="accent">' +
+    rest.toUpperCase() +
+    "</span>"
+  );
+
+}
+
+
+/* =========================================================
+   AUTO FIT NAME
+   ========================================================= */
 
 function autoFitSingleLine(
   el,
@@ -1353,7 +1739,8 @@ function autoFitSingleLine(
   maxSize
 ){
 
-  let size = maxSize;
+  let size =
+    maxSize;
 
 
   el.style.fontSize =
@@ -1375,9 +1762,9 @@ function autoFitSingleLine(
 }
 
 
-/* ============================================================================
-   AUTO-FIT QUOTE
-   ============================================================================ */
+/* =========================================================
+   AUTO FIT QUOTE
+   ========================================================= */
 
 function autoFitQuote(
   el,
@@ -1386,7 +1773,8 @@ function autoFitQuote(
   maxSize
 ){
 
-  let size = maxSize;
+  let size =
+    maxSize;
 
 
   el.style.fontSize =
@@ -1408,9 +1796,9 @@ function autoFitQuote(
 }
 
 
-/* ============================================================================
-   RENDER FLYER
-   ============================================================================ */
+/* =========================================================
+   RENDER
+   ========================================================= */
 
 function renderFlyer(){
 
@@ -1441,157 +1829,33 @@ function renderFlyer(){
     31
   );
 
-
-  /* Show flyer */
-
-  document
-    .getElementById("canvas")
-    .style.display = "flex";
-
-
-  /* Hide search */
-
-  document
-    .getElementById("memberSearch")
-    .style.display = "none";
-
 }
 
 
-/* ============================================================================
-   GENERATE BUTTON
-   ============================================================================ */
+/* =========================================================
+   ERROR HANDLING
+   ========================================================= */
 
-async function generateFlyer(){
+function showError(message){
 
-  const input =
-    document.getElementById(
-      "nameInput"
-    );
+  errorMessage.innerHTML =
+    message;
 
-
-  const error =
-    document.getElementById(
-      "searchError"
-    );
-
-
-  const loading =
-    document.getElementById(
-      "loadingText"
-    );
-
-
-  const button =
-    document.getElementById(
-      "renderButton"
-    );
-
-
-  const name =
-    input.value.trim();
-
-
-  /* Reset */
-
-  error.textContent = "";
-
-
-  if(!name){
-
-    error.textContent =
-      "Please enter the member's full name.";
-
-    input.focus();
-
-    return;
-
-  }
-
-
-  loading.style.display =
+  errorMessage.style.display =
     "block";
 
-
-  button.disabled = true;
-
-
-  try{
-
-    const member =
-      await loadMember(name);
-
-
-    applyMemberData(member);
-
-
-    /*
-       Give the browser a moment to calculate
-       the loaded image and fonts before fitting.
-    */
-
-    setTimeout(() => {
-
-      renderFlyer();
-
-    }, 100);
-
-
-  }catch(errorObject){
-
-    console.error(errorObject);
-
-
-    error.textContent =
-      errorObject.message ||
-      "Unable to load this member.";
-
-
-    loading.style.display =
-      "none";
-
-
-    button.disabled = false;
-
-
-    input.focus();
-
-  }
-
 }
 
 
-/* ============================================================================
-   BUTTON CLICK
-   ============================================================================ */
+function clearError(){
 
-document
-  .getElementById("renderButton")
-  .addEventListener(
-    "click",
-    generateFlyer
-  );
+  errorMessage.innerHTML =
+    "";
 
+  errorMessage.style.display =
+    "none";
 
-/* ============================================================================
-   ENTER KEY
-   ============================================================================ */
-
-document
-  .getElementById("nameInput")
-  .addEventListener(
-    "keydown",
-    function(event){
-
-      if(event.key === "Enter"){
-
-        generateFlyer();
-
-      }
-
-    }
-  );
-
+}
 
 </script>
 
