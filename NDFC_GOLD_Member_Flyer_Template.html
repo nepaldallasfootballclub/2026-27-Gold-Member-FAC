@@ -644,6 +644,38 @@ html,body{
   background:var(--red);
 }
 
+.download-html-button{
+  position:fixed;
+  left:20px;
+  top:calc(50% + 54px);
+  transform:translateY(-50%);
+  z-index:2000;
+  border:none;
+  border-radius:6px;
+  padding:13px 16px;
+  background:var(--red);
+  color:#fff;
+  font-family:var(--font-accent);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1px;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+}
+
+.download-html-button:hover{
+  background:var(--blue);
+}
+
+@media (max-width:1200px){
+  .download-html-button{
+    left:8px;
+    top:calc(50% + 48px);
+    padding:11px 12px;
+    font-size:11px;
+  }
+}
+
 @media (max-width:1200px){
   .change-member-button{
     left:8px;
@@ -660,6 +692,10 @@ html,body{
 
 <button class="change-member-button" id="changeMemberButton" type="button">
   CHANGE MEMBER
+</button>
+
+<button class="download-html-button" id="downloadHtmlButton" type="button" style="display:none;">
+  DOWNLOAD HTML
 </button>
 
 
@@ -1127,6 +1163,9 @@ const generateButton =
 const changeMemberButton =
   document.getElementById("changeMemberButton");
 
+const downloadHtmlButton =
+  document.getElementById("downloadHtmlButton");
+
 const errorMessage =
   document.getElementById("errorMessage");
 
@@ -1295,6 +1334,7 @@ async function loadMember(){
 
     canvas.style.display = "flex";
     setupScreen.style.display = "none";
+    downloadHtmlButton.style.display = "block";
 
     renderFlyer();
 
@@ -1524,6 +1564,123 @@ function renderFlyer(){
     31
   );
 
+}
+
+
+/* =========================================================
+   DOWNLOAD CURRENT FLYER AS STANDALONE HTML
+   ========================================================= */
+
+downloadHtmlButton.addEventListener("click", downloadCurrentFlyerHTML);
+
+function downloadCurrentFlyerHTML(){
+
+  if(!currentMemberName){
+    showError("Please load a member before downloading the flyer.");
+    return;
+  }
+
+  // Clone the CURRENT document after all member data has been applied.
+  const savedDocument = document.documentElement.cloneNode(true);
+
+  // Remove the setup UI and editor controls from the downloaded version.
+  const savedSetupScreen =
+    savedDocument.querySelector("#setupScreen");
+
+  const savedChangeButton =
+    savedDocument.querySelector("#changeMemberButton");
+
+  const savedDownloadButton =
+    savedDocument.querySelector("#downloadHtmlButton");
+
+  if(savedSetupScreen){
+    savedSetupScreen.remove();
+  }
+
+  if(savedChangeButton){
+    savedChangeButton.remove();
+  }
+
+  if(savedDownloadButton){
+    savedDownloadButton.remove();
+  }
+
+  // Make sure the flyer is visible immediately when the file is opened.
+  const savedCanvas =
+    savedDocument.querySelector("#canvas");
+
+  if(savedCanvas){
+    savedCanvas.style.display = "flex";
+  }
+
+  // Add a class so the saved file has no dark editor background.
+  savedDocument.querySelector("body")
+    .classList.add("downloaded-flyer");
+
+  const savedStyle = document.createElement("style");
+  savedStyle.textContent = `
+    html, body.downloaded-flyer{
+      margin:0;
+      padding:0;
+      background:#1a1a1a;
+      min-height:100%;
+    }
+
+    body.downloaded-flyer{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    body.downloaded-flyer .canvas{
+      margin:0 auto;
+    }
+
+    @media print{
+      html, body.downloaded-flyer{
+        background:white;
+      }
+    }
+  `;
+
+  savedDocument.querySelector("head")
+    .appendChild(savedStyle);
+
+  // Serialize exactly what is currently displayed.
+  const html =
+    "<!DOCTYPE html>\n" +
+    savedDocument.outerHTML;
+
+  const blob =
+    new Blob(
+      [html],
+      {type:"text/html;charset=utf-8"}
+    );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
+
+  const safeName =
+    currentMemberName
+      .trim()
+      .replace(/[^a-z0-9]+/gi, "_")
+      .replace(/^_+|_+$/g, "");
+
+  link.href = url;
+  link.download =
+    (safeName || "member") +
+    "_NDFC_Gold_Flyer.html";
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 1000);
 }
 
 
