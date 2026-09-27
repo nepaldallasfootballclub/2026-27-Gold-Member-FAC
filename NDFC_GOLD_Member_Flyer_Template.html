@@ -1228,20 +1228,25 @@ async function fetchGithubQuote(baseName){
       baseName + ".txt"
     );
 
-  const response = await fetch(url, {
-    cache:"no-store"
-  });
+  try{
+    const response = await fetch(url, {
+      cache:"no-store"
+    });
 
-  if(!response.ok){
-    return null;
+    if(!response.ok){
+      return "";
+    }
+
+    const text = await response.text();
+
+    return text
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .find(line => line.length > 0) || "";
+
+  }catch(error){
+    return "";
   }
-
-  const text = await response.text();
-
-  return text
-    .split(/\r?\n/)
-    .map(line => line.trim())
-    .find(line => line.length > 0) || null;
 }
 
 
@@ -1310,12 +1315,6 @@ async function loadMember(){
     if(!imageURL){
       throw new Error(
         `No GitHub image found for "${memberName}". Expected ${baseName}.jpg, ${baseName}.jpeg, or ${baseName}.png`
-      );
-    }
-
-    if(!quote){
-      throw new Error(
-        `No GitHub quote found for "${memberName}". Expected ${baseName}.txt`
       );
     }
 
