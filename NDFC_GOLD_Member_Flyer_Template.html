@@ -1142,7 +1142,7 @@ const GITHUB_QUOTE_BASE =
 const GITHUB_LOGO_URL =
   "https://raw.githubusercontent.com/nepaldallasfootballclub/NDFC-Strava-Stats/main/NDFC_Official_Logo.png";
 
-const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"];
+const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", "JPG"];
 
 
 /* =========================================================
@@ -1314,7 +1314,7 @@ async function loadMember(){
 
     if(!imageURL){
       throw new Error(
-        `No GitHub image found for "${memberName}". Expected ${baseName}.jpg, ${baseName}.jpeg, or ${baseName}.png`
+        `No GitHub image found for "${memberName}". Expected ${baseName}.jpg, ${baseName}.jpeg, ${baseName}.JPG, or ${baseName}.png`
       );
     }
 
